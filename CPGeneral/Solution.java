@@ -7,7 +7,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Stack;
 
 class Solution {
 	public int maxArea(int h, int w, int[] horizontalCuts, int[] verticalCuts) {
@@ -364,6 +366,64 @@ class Solution {
 			}
 
 		}
+	}
+
+	public int[][] kClosest(int[][] points, int k) {
+		PriorityQueue<int[]> pq = new PriorityQueue<>(
+				(a, b) -> (a[0] * a[0] + a[1] * a[1]) - ((b[0] * b[0] + b[1] * b[1])));
+		for (int i = 0; i < points.length; i++) {
+			pq.add(points[i]);
+		}
+
+		int[][] ans = new int[k][2];
+		int i = 0;
+		while (i < k) {
+			ans[i] = pq.poll();
+			i++;
+		}
+		return ans;
+
+	}
+
+	public String removeDuplicates(String s, int k) {
+		Stack<CharFreq> st = new Stack<>();
+		for (char c : s.toCharArray()) {
+			if (st.empty()) {
+				st.push(new CharFreq(c, 1));
+			} else {
+				if (st.peek().c == c) {
+					int prevf = st.pop().f;
+					if (prevf == k - 1) {
+						continue;
+					}
+					st.push(new CharFreq(c, prevf + 1));
+				} else {
+					st.push(new CharFreq(c, 1));
+				}
+			}
+		}
+		StringBuilder ans = new StringBuilder();
+		while (!st.empty()) {
+			CharFreq curr = st.peek();
+			int f = curr.f;
+			while (f-- > 0) {
+				ans.append(curr.c);
+			}
+			st.pop();
+		}
+		ans.reverse();
+		return ans.toString();
+	}
+
+	class CharFreq {
+		char c;
+		int f;
+
+		CharFreq(char c, int f) {
+			this.c = c;
+			this.f = f;
+		}
+
 	}
 
 }
