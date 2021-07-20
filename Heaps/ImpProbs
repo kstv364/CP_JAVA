@@ -1,0 +1,170 @@
+//RRATING
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Collections;
+import java.util.PriorityQueue;
+import java.util.StringTokenizer;
+ 
+/**
+1. When N%3 == 0; there's a change in the number of elements in the top 1/3rd section.
+	- When input > max element in the 2/3rd section; 
+	input will be a part of the top 1/3rd.
+	- When input <= max element in the 2/3rd section; 
+	the largest element from the 2/3rd section will become a part of the 1/3rd 
+2. When N%3 != 0;
+	- When input > max element in the 2/3rd section; 
+	input will be added to 1/3rd section and 
+	the minimum element from 1/3rd section will be moved to 2/3rd section.
+	- When input <= max element in the 2/3rd section; 
+	input will be added to the 2/3rd section
+*/
+ 
+/**
+Example:
+10
+1 1
+1 7
+2
+1 9
+1 21
+1 8
+1 5
+2
+1 9
+2
+ */
+ 
+public class RRATING {
+	static PriorityQueue<Long> minHeap = new PriorityQueue<>(); //Top 1/3rd
+	static PriorityQueue<Long> maxHeap = new PriorityQueue<>(Collections.reverseOrder());//Bottom 2/3rd
+	public static void main(String[] args) throws NumberFormatException, IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		int Q = Integer.parseInt(br.readLine());
+		int N = 0; //current size of stream
+ 
+		while(Q-- > 0) {
+			StringTokenizer st = new StringTokenizer(br.readLine());
+			int type = Integer.parseInt(st.nextToken());
+			if(type == 1) {
+				long x = Integer.parseInt(st.nextToken());
+				N++;
+				if(N < 3) {
+					maxHeap.add(x);
+				} else if(N%3 == 0) {
+					if(x > maxHeap.peek()) {
+						minHeap.add(x);
+					} else {
+						maxHeap.add(x);
+						minHeap.add(maxHeap.poll());
+					}
+				} else {
+					if(x > maxHeap.peek()) {
+						minHeap.add(x);
+						maxHeap.add(minHeap.poll());
+					} else {
+						maxHeap.add(x);
+					}
+				}
+ 
+			} else if(type == 2) {
+				if(minHeap.isEmpty()) System.out.println("#");
+				else System.out.println(minHeap.peek());
+ 
+			}
+		}
+	}
+}
+ 
+//Kth largest in stream
+ 
+import java.util.PriorityQueue;
+import java.util.Scanner;
+ 
+public class KthLargestStream {
+	public static void main(String[] args) {
+		Scanner sc = new Scanner(System.in);
+		int N = sc.nextInt();
+		int K = sc.nextInt();
+ 
+		PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+		for(int i = 0; i < N; i++) {
+			int input = sc.nextInt();
+			minHeap.add(input);
+			if(minHeap.size() > K) {
+				minHeap.poll();
+			}
+ 
+			if(minHeap.size() == K) {
+				System.out.println(minHeap.peek()); 
+			} else  {
+				System.out.println("#");
+			}
+		}
+	}
+}
+ 
+//Nearly Sorted
+ 
+import java.util.Arrays;
+import java.util.PriorityQueue; 
+ 
+public class NearlySorted { 
+    public static void main(String[] args) { 
+        int k = 4;
+        int arr[] = {11, 10, 8, 6, 4, 90, 55, 39};
+        int n = arr.length;
+        int[] res = sort(arr, n, k);
+        System.out.println(Arrays.toString(res));
+    }
+ 
+	private static int[] sort(int[] arr, int n, int k) {
+		PriorityQueue<Integer> minHeap = new PriorityQueue<>();
+ 
+		for(int i = 0; i <= k; i++) {
+			minHeap.add(arr[i]);
+		}
+ 
+		int index = k + 1;
+		int[] res = new int[n];
+		for(int i = 0; i < n; i++) {
+			res[i] = minHeap.poll();
+			if(index != n) {
+				minHeap.add(arr[index++]);
+			}
+		}
+ 
+		return res;
+	}      
+} 
+ 
+//Break The Door
+ 
+public static void solve(){
+    	int n = in.nextInt();
+    	long d = in.nextLong();
+    	int k = in.nextInt();
+    	long[] p = new long[n];
+    	for(int i = 0; i < n; i++) p[i] = in.nextLong();
+    	trialsRequired(n, d, k, p);
+    }
+ 
+    //O(DlogN + NlogN)
+    public static void trialsRequired(int n, long d, int k, long[] p) {
+    	PriorityQueue<Long> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+    	for(int i = 0; i < n; i++) maxHeap.add(p[i]); //O(N*logN) 
+    	int count = 0;
+    	while(d > 0) {
+    		long maxPower = maxHeap.poll();  //O(log N)
+    		if(d > maxPower) d -= maxPower;
+    		else d = 0;
+    		count++;
+    		maxHeap.add(maxPower/2); //O(log N)
+    		if(count > k) break;
+    	}
+ 
+    	if(count > k) System.out.println(-1);
+    	else System.out.println(count);
+ 
+    }
+ 
