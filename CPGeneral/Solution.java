@@ -426,4 +426,28 @@ class Solution {
 
 	}
 
+	public int subarraySum(int[] nums, int k) {
+		int n = nums.length;
+		for (int i = 1; i < n; i++) {
+			nums[i] += nums[i - 1];
+		}
+
+		int c = 0;
+		for (int i = 0; i < n; i++) {
+			for (int j = i; j < n; j++) {
+				if (i == 0) {
+					if (nums[j] == k) {
+						c++;
+					}
+				} else {
+					if (nums[j] - nums[i - 1] == k) {
+						c++;
+					}
+				}
+			}
+		}
+		return c;
+
+	}
+
 }
